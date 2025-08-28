@@ -5,7 +5,7 @@ import Link from "next/link";
 
 const tags: NoteTag[] = ["Todo", "Work", "Personal", "Meeting", "Shopping"];
 
-export default function Sidebar() {
+export default function SidebarNotes() {
     return (
         <div className={css.menuContainer}>
             <ul className={css.menuList}>

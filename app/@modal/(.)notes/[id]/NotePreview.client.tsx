@@ -7,7 +7,7 @@ import { fetchNoteById } from "@/lib/api";
 import Modal from "@/components/Modal/Modal";
 
 
-export default function PreviewModal() {
+export default function NotePreviewModal() {
   const router = useRouter();
   const close = () => router.back();
   const { id } = useParams<{ id: string }>();
