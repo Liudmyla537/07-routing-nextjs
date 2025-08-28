@@ -7,13 +7,16 @@ import Pagination from "@/components/Pagination/Pagination";
 import NoteList from "@/components/NoteList/NoteList";
 import Modal from "@/components/Modal/Modal";
 import NoteForm from "@/components/NoteForm/NoteForm";
-import { useQuery, keepPreviousData } from "@tanstack/react-query";
+import { keepPreviousData, useQuery,} from "@tanstack/react-query";
 import { fetchNotes } from "@/lib/api";
 import { useDebouncedCallback } from "use-debounce";
+import { NoteTag } from "@/types/note";
 
+interface Props{
+  tag?: NoteTag;
+}
 
-
-export default function NotesClient() {
+export default function NotesClient({tag}: Props) {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [inputValue, setInputValue] = useState("");
@@ -32,9 +35,10 @@ export default function NotesClient() {
   const perPage = 12;
 
   const { data } = useQuery({
-    queryKey: ["notes", search, page],
-    queryFn: () => fetchNotes(page, perPage, search),
+    queryKey: ["notes", search, page, tag],
+    queryFn: () => fetchNotes({ page, perPage, search, tag }),
     placeholderData: keepPreviousData,
+    refetchOnMount: false,
   });
 
   const totalPages = data?.totalPages ?? 0;
@@ -52,15 +56,13 @@ export default function NotesClient() {
         )}
         <button
           className={css.button}
-          onClick={() => {
-            setIsModalOpen(!isModalOpen);
-          }}
+          onClick={() => setIsModalOpen(!isModalOpen)}
         >
           Create note +
         </button>
       </header>
 
-      {data && data?.notes.length >= 1 && <NoteList notes={data.notes} />}
+      {data && data.notes.length >= 1 && <NoteList notes={data.notes} />}
       
       {isModalOpen && (
         <Modal
@@ -69,9 +71,7 @@ export default function NotesClient() {
           }}
         >
           <NoteForm
-            onCancel={() => {
-              setIsModalOpen(!isModalOpen);
-            }}
+            onCancel={() => setIsModalOpen(!isModalOpen)}
           />
         </Modal>
       )}
